@@ -22,9 +22,9 @@ const registerUser = asyncHandler( async (req,res) => {
     // we are doing checks here aas validation
     // now we can do one thing that we can apply more and more if checks for validation
     // or we can use the different syntax as below
-    if( fullName === "") {
-        throw new ApiError(400, "Full name is required")
-    }
+    //! if( fullName === "") {
+    //!     throw new ApiError(400, "Full name is required")
+    //! }
 
     // array of if checks
     if(
@@ -56,6 +56,7 @@ const registerUser = asyncHandler( async (req,res) => {
         throw new ApiError(400, "Avatar file is required")
     }
 
+    // uploading on cloudinary
     const avatar = await uploadOnCloudinary(avatarLocalPath)
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
