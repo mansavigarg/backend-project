@@ -122,10 +122,18 @@ const loginUser = asyncHandler(async (req,res) =>  {
     // TODO: send these tokens in cookies
 
     const {email,username,password} = req.body
+    console.log(email);
+    
 
-    if(!username || !email){
+    if(!username && !email){
         throw new ApiError(400, "Username or Email is required")
     }
+
+    // Here is an alternative of above code based on logic discussed in video:(either email or username)
+    // if (!(username || email)) {
+    //     throw new ApiError(400, "username or email is required")
+        
+    // }
 
     const user = await User.findOne({
         $or: [{username},{email}]
@@ -143,9 +151,11 @@ const loginUser = asyncHandler(async (req,res) =>  {
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
-    const loggedInUser = User.findById(user._id).select(
+    const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken"
     )
+    console.log(loggedInUser);
+    
 
     // creating options for cookies
     const options = {
@@ -172,7 +182,7 @@ const loginUser = asyncHandler(async (req,res) =>  {
 
 const logoutUser = asyncHandler(async(req,res) => {
     // delete the refreshToken and remove the cookie of refreshToken and accessToken
-    await User.findByIdAnd(
+    await User.findByIdAndUpdate(
         req.user._id,
         {
             $set: {
